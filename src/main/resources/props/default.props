@@ -1,0 +1,12 @@
+# Properties in this file will be read when running in dev mode
+#db.driver=com.mysql.jdbc.Driver
+#db.url=jdbc:mysql://localhost/so-done
+#db.user=
+#db.password=
+
+#twitter.consumerkey=
+#twitter.consumersecret=
+#twitter.callbackurl=
+#my.service.code=
+
+reply.max=3
