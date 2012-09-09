@@ -107,7 +107,7 @@ class TwitterLogin {
   def loginCheck(xml: NodeSeq): NodeSeq = {
     if (TwitterSessionVar.isLogined()) {
       val userMst = TwitterSessionVar.getUser
-      <p>ようこそ { userMst.twitterName } さん</p>
+      <a>ようこそ { userMst.twitterName } さん</a>
     } else {
       <a href="./twitter/signin">Twitter Login</a>
     }

@@ -20,8 +20,8 @@ class Consultation {
   def consultation( xhtml:Group  ):NodeSeq  =  {
     consult.is.openTheBox match {
       case "" => bind("consult", xhtml,
-        "text" -> SHtml.textarea("", c => consult(Full(c))),
-        "submit" -> SHtml.submit( " 送 信 ", {() => save(consult)})
+        "text" -> SHtml.textarea("", c => consult(Full(c)), "class" -> "span4", "rows" -> "6"),
+        "submit" -> SHtml.submit( " 送 信 ", {() => save(consult)}, "class" -> "btn btn-primary btn-large")
         )
       case _ => <p>質問を受け付けました。</p>
     }

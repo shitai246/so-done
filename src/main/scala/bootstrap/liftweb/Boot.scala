@@ -92,8 +92,7 @@ class Boot {
     ResourceServer.allow {
       case "css" :: _ => true
       case "js" :: _ => true
-      case "images" :: _ => true
-      case "bootstrap" :: _ => true
+      case "img" :: _ => true
     }
 
     S.addAround(DB.buildLoanWrapper)

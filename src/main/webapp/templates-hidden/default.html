@@ -8,49 +8,40 @@
     <style class="lift:CSS.blueprint" />
     <style class="lift:CSS.fancyType" />
 
-    <link rel="stylesheet" type="text/css" href="/classpath/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/classpath/bootstrap/css/bootstrap-responsive.min.css" />
+    <link rel="stylesheet" type="text/css" href="/classpath/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/classpath/css/bootstrap-responsive.min.css" />
 
-    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
+    <script id="jquery" src="/classpath/js/jquery-1.8.1.js" type="text/javascript"/>
     <script id="json" src="/classpath/json.js" type="text/javascript"/>
 
-    <script src="/classpath/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/classpath/js/bootstrap.min.js" type="text/javascript"></script>
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
   </head>
-  <body>
+  <body>  
+  
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a href="http://so-done.a4p.me/" class="brand">so-done!</a>
+          <span class="lift:Menu.builder?top:class=nav;li_item:class=active;linkToSelf=true;" />
+          <ul class="nav pull-right">
+            <li><lift:TwitterLogin.loginCheck /></li>
+          </ul>
+        </div>
+      </div>
+    </div>  
     <div class="container">
-      <div class="row">
-        <div class="span8">
-          <h1>so-done.</h1>
-          <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="/images/ajax-loader.gif"/>
+      <div class="visible-desktop">
+        <div id="content" >
+        <!-- The HTML content will go here -->
         </div>
-        <div class="span4">
-          <lift:TwitterLogin.loginCheck />
-         </div>
       </div>
-
-      <div class="row">
-        <div class="span4">
-          <span class="lift:Menu.builder" />	
-          <hr class="space" />
-          <span class="lift:Msgs?showAll=true"/>
-        </div>
-
-        <div class="span8">
-          <div id="content" >
-          <!-- The HTML content will go here -->
-          </div>
-        </div>
-
-      </div>
-
-      <hr />
-      <div class="column span-23 last" style="text-align: center">
-        <h4 class="alt">
-          <a href="http://www.liftweb.net"><i>Lift</i></a> 
-	        is Copyright 2007-2010 WorldWide Conferencing, LLC.  Distributed under an Apache 2.0 License.</h4>
-      </div>
-      
     </div>
+
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
