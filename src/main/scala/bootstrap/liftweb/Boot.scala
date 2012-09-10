@@ -53,7 +53,7 @@ class Boot {
     def sitemap() = SiteMap(
       Menu("Home") / "index",
 //      Menu(Loc"Twitterログイン", Li)
-      Menu("Twitterログイン") / "twitter" / "signin" >> loginFirst,
+      Menu("Twitterログイン") / "twitter" / "signin" >> Hidden,
       Menu("twitterCallback") / "twitter" / "callback" >> Hidden,
       Menu("相談する") / "consult" / "consult" >> loginAfter,
       Menu("回答する") / "consult" / "replyList" >> loginAfter,

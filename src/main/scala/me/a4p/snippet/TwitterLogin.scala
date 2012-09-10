@@ -109,7 +109,7 @@ class TwitterLogin {
       val userMst = TwitterSessionVar.getUser
       <a>ようこそ { userMst.twitterName } さん</a>
     } else {
-      <a href="./twitter/signin">Twitter Login</a>
+      <a href="./twitter/signin">Twitterログイン</a>
     }
   }
 
