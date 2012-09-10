@@ -3,15 +3,20 @@ package me.a4p.snippet
 import net.liftweb.http.{RequestVar, SHtml}
 import net.liftweb.common.{Box, Full}
 import net.liftweb.util.Helpers._
+import net.liftweb.http.SHtml._
 import scala.xml.{Group, NodeSeq}
 import _root_.me.a4p.model.{UserMst, ConsultData, ReplyData}
 import java.util.Date
-import net.liftweb.mapper.By
+import net.liftweb.mapper.{By, ByList}
+import scala.xml.Text
+import scala.xml.XML
 
 /**
  * 自分の相談一覧
  */
 class ConsultList {
+
+  object consult extends RequestVar(Full(new ConsultData))
 
   /**
    * 自分の相談一覧を取得する
@@ -26,7 +31,8 @@ class ConsultList {
    */
   def myReplyList() : NodeSeq = {
     val list = ReplyData.findAll(By(ReplyData.userId, TwitterSessionVar.getUser.id))
-    list.flatMap(a => showMyReplyData(a))
+    val list2 = ConsultData.findAll(ByList(ConsultData.id, list.map(a => a.consultId.get)))
+    list2.flatMap(a => showConsultData(a))
   }
 
   /**
@@ -37,22 +43,40 @@ class ConsultList {
     list.flatMap(a => showConsultData(a))
   }
 
+  def view(xhtml: Group) : NodeSeq = {
+    val c = consult.openTheBox
+    bind("consult", xhtml,
+        "consultation" -> {XML.loadString("<p>" + c.consultation.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")},
+        "consultDate" -> <span>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format c.addDate.get}</span>,
+        "reply" -> {showReply(c)}
+      )
+  }
+
   private def showConsultData(consultData : ConsultData) : NodeSeq = {
-    val list = ReplyData.findAll(By(ReplyData.consultId, consultData.id))
-    <p>{consultData.consultation}({consultData.addDate})</p><ul>{list.flatMap(a => showReplyData(a))}</ul>
+    <tr><td>{SHtml.link("/consult/data", () => consult(Full(consultData)), Text(trimConsultation(consultData.consultation)))}</td><td>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format consultData.addDate.get}</td></tr>
   }
 
-  private def showReplyData(replyData : ReplyData) : NodeSeq = {
-    val replyName = UserMst.find(By(UserMst.id, replyData.userId)).openTheBox.twitterName
-    <li>@{replyName} : {replyData.reply} ({replyData.addDate})</li>
-  }
-
-  private def showMyReplyData(replyData : ReplyData) : NodeSeq = {
-    val consultData = ConsultData.find(By(ConsultData.id, replyData.consultId)).openTheBox
-    if (consultData.publicFlg) {
-      showConsultData(consultData)
+  private def showReply(c : ConsultData) : NodeSeq = {
+    if (c.publicFlg || (TwitterSessionVar.isLogined && c.userId == TwitterSessionVar.getUser.id)) {
+      ReplyData.findAll(By(ReplyData.consultId, c.id)).flatMap(r => showReplyData(r))
     } else {
-      <p>{consultData.consultation}({consultData.addDate})</p><ul><li>@{TwitterSessionVar.getUser.twitterName} : {replyData.reply} ({replyData.addDate})</li></ul>
+      ReplyData.findAll(By(ReplyData.userId, TwitterSessionVar.getUser.id)).flatMap(r => showReplyData(r))
+    }
+  }
+  private def showReplyData(r : ReplyData) : NodeSeq = {
+    val replyName = UserMst.find(By(UserMst.id, r.userId)).openTheBox.twitterName
+    val reply = XML.loadString("<p>" + r.reply.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")
+    <tr><td>&nbsp;</td><td><p>@{replyName}</p><br />{r.reply}<div class="pull-right">{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format r.addDate.get}</div></td></tr>
+  }
+
+  /**
+   * FIXME 重複こーど
+   */
+  private def trimConsultation(consultation : String) : String = {
+    if (consultation.size <= 40) {
+      consultation
+    } else {
+      consultation.substring(0, 38) + "…"
     }
   }
 }

@@ -52,7 +52,7 @@ class Boot {
     // Build SiteMap
     def sitemap() = SiteMap(
       Menu("Home") / "index",
-//      Menu(Loc"Twitterログイン", Li)
+      Menu("info") / "static" / "info",
       Menu("Twitterログイン") / "twitter" / "signin" >> Hidden,
       Menu("twitterCallback") / "twitter" / "callback" >> Hidden,
       Menu("相談する") / "consult" / "consult" >> loginAfter,
@@ -60,7 +60,8 @@ class Boot {
       Menu("回答") / "consult" / "reply" >> Hidden,
       Menu("自分の相談") / "consult" / "myConsultList" >> loginAfter,
       Menu("自分の回答") / "consult" / "myReplyList" >> loginAfter,
-      Menu("みんなの回答") / "consult" / "all"
+      Menu("相談") / "consult" / "data" >> Hidden,
+      Menu("みんなの相談") / "consult" / "all"
       // Menu with special Link
 //      Menu(Loc("Static", Link(List("static"), false, "/static/index"), "Static Content"))
       // ディレクトリごと読み取り可能にするやつら

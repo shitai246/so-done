@@ -4,10 +4,10 @@ import net.liftweb.http.{RequestVar, SHtml}
 import net.liftweb.common.{Box, Full}
 import net.liftweb.http.SHtml._
 import net.liftweb.util.Helpers._
-import scala.xml.{Group, NodeSeq, Text}
+import scala.xml.{Group, NodeSeq, Text, XML}
 import java.util.Date
 import _root_.me.a4p.model.{ConsultData, ReplyData}
-import net.liftweb.mapper.By
+import net.liftweb.mapper.{By, NotBy}
 import net.liftweb.util.Props
 
 /**
@@ -22,18 +22,18 @@ class Reply {
   object consultId extends RequestVar(Full(""))
 
   def consultList() : NodeSeq = {
-    val consultList = ConsultData.findAll(By(ConsultData.publicFlg, false))
-    consultList.flatMap(a => <p>{a.consultation}({a.addDate}){link("/consult/reply", () => consult(Full(a)), Text("Reply"))}</p><hr />)
+    val consultList = ConsultData.findAll(By(ConsultData.publicFlg, false), NotBy(ConsultData.userId, TwitterSessionVar.getUser.id))
+    consultList.flatMap(a => <tr><td>{link("/consult/reply", () => consult(Full(a)), Text(trimConsultation(a.consultation)))}</td><td>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format a.addDate.get}</td></tr>)
   }
 
   def reply( xhtml: Group ) : NodeSeq = {
     reply.is.openTheBox match {
       case "" => bind("reply", xhtml,
-        "consultation" -> <p>{consult.openTheBox.consultation}</p>,
-        "consultDate" -> <p>{consult.openTheBox.addDate}</p>,
+        "consultation" -> {XML.loadString("<p>" + consult.openTheBox.consultation.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")},
+        "consultDate" -> <span>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format  consult.openTheBox.addDate.get}</span>,
         "consultData" -> SHtml.hidden(c => consultId(Full(c)), consult.openTheBox.id.toString),
-        "text" -> SHtml.textarea("", r => reply(Full(r))),
-        "submit" -> SHtml.submit(" 送 信 ", {() => save(consultId, reply)})
+        "text" -> SHtml.textarea("", r => reply(Full(r)), "class" -> "span4", "rows" -> "6"),
+        "submit" -> SHtml.submit(" 送 信 ", {() => save(consultId, reply)}, "class" -> "btn btn-primary btn-large")
         )
       case _ => <p>回答を受け付けました。</p>
     }
@@ -56,6 +56,14 @@ class Reply {
         case _ => false
         }
       case _ => false
+    }
+  }
+
+  private def trimConsultation(consultation : String) : String = {
+    if (consultation.size <= 40) {
+      consultation
+    } else {
+      consultation.substring(0, 38) + "…"
     }
   }
 

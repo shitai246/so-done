@@ -7,7 +7,7 @@ import net.liftweb.http._
 import net.liftweb.common._
 import net.liftweb.util._
 import java.util.Date
-import scala.xml.NodeSeq
+import scala.xml.{NodeSeq, Text}
 import _root_.me.a4p.model.UserMst
 import net.liftweb.mapper.By
 
@@ -109,7 +109,7 @@ class TwitterLogin {
       val userMst = TwitterSessionVar.getUser
       <a>ようこそ { userMst.twitterName } さん</a>
     } else {
-      <a href="./twitter/signin">Twitterログイン</a>
+      SHtml.link("/twitter/signin", () => (), Text("Twitterログイン"))
     }
   }
 

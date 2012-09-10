@@ -1,5 +1,15 @@
 <div class="lift:surround?with=default;at=content">
-  <h2>自分の回答</h2>
-  <lift:ConsultList.myReplyList />
+  <h3>自分の回答</h3>
+  <table class="table table-striped table-bordered talbe-condensed">
+    <thead>
+      <tr>
+        <th class="span6">相談</th>
+        <th class="span2">日時</th>
+      </tr>
+    </thead>
+    <tbody>
+      <lift:ConsultList.myReplyList />
+    </tbody>
+  </table>
 </div>
 
