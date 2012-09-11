@@ -23,4 +23,5 @@ class UserMst extends KeyedMapper[Long, UserMst] {
   object id extends MappedLongIndex(this)
   object twitterKey extends MappedString(this, 256)
   object twitterName extends MappedString(this, 64)
+  object lastLogin extends MappedDateTime(this)
 }

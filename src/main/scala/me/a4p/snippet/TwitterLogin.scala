@@ -87,7 +87,7 @@ class TwitterLogin {
     val twitterKey = SecurityHelpers.md5(accToken.getToken + "." + myServiceCode)
     val twitterName = accToken.getScreenName
     val userMst = UserMst.find(By(UserMst.twitterKey, twitterKey)).openOr(UserMst.create)
-    userMst.twitterKey(twitterKey).twitterName(twitterName).save()
+    userMst.twitterKey(twitterKey).twitterName(twitterName).lastLogin(new Date).save()
 
     // セッション上の余計なデータは消しておく
     TwitterSessionVar.remove
@@ -96,6 +96,25 @@ class TwitterLogin {
 
     // アクセストークン取得後のページへリダイレクト
     S.redirectTo("../index")
+  }
+  /**
+   * TwitterへのOAuth認証を行う.
+   */
+  def logout(): Unit = {
+    TwitterSessionVar.remove
+    S.redirectTo("../index")
+  }
+
+  /**
+   * ログインユーザ名を表示する
+   */
+  def getUserName(xml: NodeSeq): NodeSeq = {
+    if (TwitterSessionVar.isLogined()) {
+      val userMst = TwitterSessionVar.getUser
+      <a>ようこそ { userMst.twitterName } さん</a>
+    } else {
+      <a>ようこそ ゲスト さん</a>
+    }
   }
 
   /**
@@ -107,7 +126,7 @@ class TwitterLogin {
   def loginCheck(xml: NodeSeq): NodeSeq = {
     if (TwitterSessionVar.isLogined()) {
       val userMst = TwitterSessionVar.getUser
-      <a>ようこそ { userMst.twitterName } さん</a>
+      SHtml.link("/twitter/logout", () => (), Text("ログアウト"))
     } else {
       SHtml.link("/twitter/signin", () => (), Text("Twitterログイン"))
     }

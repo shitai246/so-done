@@ -48,7 +48,6 @@ class Reply {
             .reply(r)
             .userId(TwitterSessionVar.getUser.id)
             .addDate(new Date).save
-          println("debug1 :  " + c)
           if (ReplyData.findAll(By(ReplyData.consultId, c.toLong)).size >= replyMax) {
             ConsultData.find(By(ConsultData.id, c.toLong)).openTheBox.publicFlg(true).save
           }

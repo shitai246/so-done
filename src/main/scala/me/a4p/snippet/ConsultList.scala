@@ -57,16 +57,16 @@ class ConsultList {
   }
 
   private def showReply(c : ConsultData) : NodeSeq = {
-    if (c.publicFlg || (TwitterSessionVar.isLogined && c.userId == TwitterSessionVar.getUser.id)) {
+    if (c.publicFlg || (TwitterSessionVar.isLogined && c.userId.get == TwitterSessionVar.getUser.id.get)) {
       ReplyData.findAll(By(ReplyData.consultId, c.id)).flatMap(r => showReplyData(r))
     } else {
-      ReplyData.findAll(By(ReplyData.userId, TwitterSessionVar.getUser.id)).flatMap(r => showReplyData(r))
+      ReplyData.findAll(By(ReplyData.consultId, c.id), By(ReplyData.userId, TwitterSessionVar.getUser.id)).flatMap(r => showReplyData(r))
     }
   }
   private def showReplyData(r : ReplyData) : NodeSeq = {
     val replyName = UserMst.find(By(UserMst.id, r.userId)).openTheBox.twitterName
     val reply = XML.loadString("<p>" + r.reply.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")
-    <tr><td>&nbsp;</td><td><p>@{replyName}</p><br />{r.reply}<div class="pull-right">{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format r.addDate.get}</div></td></tr>
+    <tr><td>{reply}<div class="span2">@{replyName}</div><div class="pull-right">{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format r.addDate.get}</div></td></tr>
   }
 
   /**
