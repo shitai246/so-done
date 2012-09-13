@@ -55,13 +55,15 @@ class Boot {
       Menu("info") / "static" / "info",
       Menu("Twitterログイン") / "twitter" / "signin" >> Hidden,
       Menu("twitterCallback") / "twitter" / "callback" >> Hidden,
+      Menu("twitterLogout") / "twitter" / "logout" >> Hidden,
       Menu("相談する") / "consult" / "consult" >> loginAfter,
-      Menu("回答する") / "consult" / "replyList" >> loginAfter,
-      Menu("回答") / "consult" / "reply" >> Hidden,
+//      Menu("回答する") / "consult" / "replyList" >> loginAfter,
+//      Menu("回答") / "consult" / "reply" >> Hidden,
       Menu("自分の相談") / "consult" / "myConsultList" >> loginAfter,
       Menu("自分の回答") / "consult" / "myReplyList" >> loginAfter,
       Menu("相談") / "consult" / "data" >> Hidden,
-      Menu("みんなの相談") / "consult" / "all"
+      Menu("相談一覧") / "consult" / "consultList"
+//      Menu("みんなの相談") / "consult" / "all"
       // Menu with special Link
 //      Menu(Loc("Static", Link(List("static"), false, "/static/index"), "Static Content"))
       // ディレクトリごと読み取り可能にするやつら

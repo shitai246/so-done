@@ -3,12 +3,19 @@
   <table class="table table-striped table-bordered talbe-condensed">
     <thead>
       <tr>
-        <th class="span6">相談</th>
+        <th class="span5">相談</th>
         <th class="span2">日時</th>
+        <th class="span1">回答状況</th>
       </tr>
     </thead>
     <tbody>
-      <lift:ConsultList.myReplyList />
+      <lift:ConsultList.myReplyList>
+        <tr>
+          <td><list:consultation /></td>
+          <td><list:addDate /></td>
+          <td><list:status /></td>
+        </tr>
+      </lift:ConsultList.myReplyList>
     </tbody>
   </table>
 </div>

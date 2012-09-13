@@ -10,6 +10,7 @@ import java.util.Date
 import net.liftweb.mapper.{By, ByList}
 import scala.xml.Text
 import scala.xml.XML
+import net.liftweb.http.S
 
 /**
  * 自分の相談一覧
@@ -18,21 +19,46 @@ class ConsultList {
 
   object consult extends RequestVar(Full(new ConsultData))
 
+  def list(xhtml : NodeSeq) : NodeSeq = {
+//    // <xml:Group>で複数のタグをグルーピング
+//    <xml:Group>{
+      ConsultData.findAll.flatMap{ data =>
+        bind("list", xhtml,
+          "consultation" -> SHtml.link("/consult/data?id=" + data.id.get, () => (), Text(trimConsultation(data.consultation))),
+          "addDate" -> ("%tY/%<tm/%<td %<tH:%<tM:%<tS" format data.addDate.get),
+          "status" -> (if (data.publicFlg.get) "受付終了" else "受付中")
+        )
+      }
+//    }</xml:Group>
+  }
+
   /**
    * 自分の相談一覧を取得する
    */
-  def myConsultList() : NodeSeq  =  {
+  def myConsultList(xhtml : NodeSeq) : NodeSeq  =  {
     val list = ConsultData.findAll(By(ConsultData.userId, TwitterSessionVar.getUser.id))
-    list.flatMap(a => showConsultData(a))
+    list.flatMap{ data =>
+        bind("list", xhtml,
+          "consultation" -> SHtml.link("/consult/data?id=" + data.id.get, () => (), Text(trimConsultation(data.consultation))),
+          "addDate" -> ("%tY/%<tm/%<td %<tH:%<tM:%<tS" format data.addDate.get),
+          "status" -> (if (data.publicFlg.get) "受付終了" else "受付中")
+        )
+    }
   }
 
   /**
    * 自分の回答一覧を取得する
    */
-  def myReplyList() : NodeSeq = {
+  def myReplyList(xhtml : NodeSeq) : NodeSeq = {
     val list = ReplyData.findAll(By(ReplyData.userId, TwitterSessionVar.getUser.id))
     val list2 = ConsultData.findAll(ByList(ConsultData.id, list.map(a => a.consultId.get)))
-    list2.flatMap(a => showConsultData(a))
+    list2.flatMap{ data =>
+        bind("list", xhtml,
+          "consultation" -> SHtml.link("/consult/data?id=" + data.id.get, () => (), Text(trimConsultation(data.consultation))),
+          "addDate" -> ("%tY/%<tm/%<td %<tH:%<tM:%<tS" format data.addDate.get),
+          "status" -> (if (data.publicFlg.get) "受付終了" else "受付中")
+        )
+    }
   }
 
   /**
@@ -43,14 +69,18 @@ class ConsultList {
     list.flatMap(a => showConsultData(a))
   }
 
-  def view(xhtml: Group) : NodeSeq = {
-    val c = consult.openTheBox
-    bind("consult", xhtml,
-        "consultation" -> {XML.loadString("<p>" + c.consultation.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")},
-        "consultDate" -> <span>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format c.addDate.get}</span>,
-        "reply" -> {showReply(c)}
-      )
+  def consultView(xhtml: Group) : NodeSeq = {
+    val consultData = ConsultData.find(By(ConsultData.id, S.param("id").openOr("0").toLong))
+    consultData match {
+      case Full(c) =>
+        bind("consult", xhtml,
+          "consultation" -> {XML.loadString("<p>" + c.consultation.get.replaceAll(sys.props("line.separator").head.toString, "<br />") + "</p>")},
+          "consultDate" -> <span>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format c.addDate.get}</span>
+        )
+      case _ => <blank />
+    }
   }
+
 
   private def showConsultData(consultData : ConsultData) : NodeSeq = {
     <tr><td>{SHtml.link("/consult/data", () => consult(Full(consultData)), Text(trimConsultation(consultData.consultation)))}</td><td>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format consultData.addDate.get}</td></tr>
@@ -73,10 +103,10 @@ class ConsultList {
    * FIXME 重複こーど
    */
   private def trimConsultation(consultation : String) : String = {
-    if (consultation.size <= 40) {
+    if (consultation.size <= 35) {
       consultation
     } else {
-      consultation.substring(0, 38) + "…"
+      consultation.substring(0, 33) + "…"
     }
   }
 }
