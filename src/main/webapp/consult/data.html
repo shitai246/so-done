@@ -1,0 +1,46 @@
+<div class="lift:surround?with=default;at=content">
+  <h3>相談内容</h3>
+  <lift:ConsultList.consultView>
+    <table class="table table-bordered talbe-condensed">
+      <tbody>
+        <tr>
+          <td>
+            <consult:consultation />
+            <div class="pull-right">
+              <consult:consultDate />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </lift:ConsultList.consultView>
+  <lift:Reply.replyView>
+    <table class="table table-bordered talbe-condensed span7 pull-right">
+      <tbody>
+        <tr>
+          <td>
+            <reply:reply />
+            <reply:consultId />
+            <reply:submit />
+            <div class="pull-left">
+              <reply:replyUser />
+            </div>
+            <div class="pull-right">
+              <reply:replyDate />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </lift:Reply.replyView>
+  <lift:Reply.reply form="POST">
+    <div class="row">
+      <div class="span8 input">
+        <label>回答する</label>
+        <reply:consultId />
+        <reply:text />
+      </div>
+    </div>
+    <reply:submit />
+  </lift:Reply.reply>
+</div>
