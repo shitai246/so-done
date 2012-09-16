@@ -18,14 +18,8 @@ class Reply {
 
   val replyMax = (Props.get("reply.max") openOr "10").toInt
 
-  object consult extends RequestVar(Full(new ConsultData))
   object reply extends RequestVar(Full(""))
   object consultId extends RequestVar(Full(""))
-
-  def consultList() : NodeSeq = {
-    val consultList = ConsultData.findAll(By(ConsultData.publicFlg, false), NotBy(ConsultData.userId, TwitterSessionVar.getUser.id))
-    consultList.flatMap(a => <tr><td>{link("/consult/reply", () => consult(Full(a)), Text(trimConsultation(a.consultation)))}</td><td>{"%tY/%<tm/%<td %<tH:%<tM:%<tS" format a.addDate.get}</td></tr>)
-  }
 
   def replyView(xhtml: Group) : NodeSeq = {
     val consultData = ConsultData.find(By(ConsultData.id, S.param("id").openOr("0").toLong))
@@ -103,17 +97,5 @@ class Reply {
         }
       case _ => false
     }
-  }
-
-  private def trimConsultation(consultation : String) : String = {
-    if (consultation.size <= 40) {
-      consultation
-    } else {
-      consultation.substring(0, 38) + "…"
-    }
-  }
-
-  def replyList() : NodeSeq = {
-    ReplyData.findAll().flatMap(a => <tr>{a.htmlLine}</tr>)
   }
 }
